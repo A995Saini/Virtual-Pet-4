@@ -1,34 +1,47 @@
 //Create variables here
 var database;
-var dogImage;
-var happydogImage;
-var foodS;
-var dog;
+var dog, happyDog, database, foodS, foodStock
+var dogImg, dogHappyImg;
+var milkBottle2, milkImg;
+var gameState;
+var bedroom,garden,livingroom,washroom;
 
 function preload(){
-  dogImage = loadImage("images/dogImg.png");
-  happydogImage=loadImage("images/dogImg1.png");
-  milkImage=loadImage("images/milk.png");
-  livingroomImage=loadImage("images/Living Room.png");
-  runningLeftImage=loadImage("images/runningLeft.png");
+  sadDog = loadImage("Dog.png");
+  happyDog = loadImage("happydog.png");
+  milkImg = loadImage("milk.png");
+  bedroom = loadImage("Bed Room.png");
+  garden = loadImage("Garden.png");
+  livingroom = loadImage("Living Room.png");
+  washroom = loadImage("washroom.png")
 }
 
-
 function setup() {
-	createCanvas(500,500);
-  database=firebase.database();
+  database = firebase.database();
+  createCanvas(500, 500);
 
-  dog=createSprite(250,250);
-  dog.addImage(dogImage);
-
-  var foodStockRef = database.ref('foodStock');
-  foodStockRef.on("value",readStock);
+  foodObj=new Food();
   
+  dog = createSprite(250,250,10,10);
+  dog.addImage(sadDog);
+  dog.scale = 0.15;
+  
+  foodStock = database.ref('food');
+  foodStock.on("value",readStock);
+  foodStock.set(20);
+  
+ 
+
+  milkBottle2 = createSprite(210,280,10,10);
+  milkBottle2.addImage(milkImg);
+  milkBottle2.scale = 0.025;
+  milkBottle2.visible = false;
+
 }
 
 
 function draw() { 
-  background(87);
+ 
   background("yellow")
 
   foodObj.display();
@@ -36,21 +49,17 @@ function draw() {
 
   if(foodS == 0){
     dog.addImage(happyDog);
-    milkBotltle2.visible=false;
+    milkBottle2.visible=false;
   }else{
     dog.addImage(sadDog);
-    milkBotltle2.visible=true;
+    milkBottle2.visible=true;
 
     
   }
-  }
+  
   
  
-     {
-        writeStock(foodS);
-        dog.addImage(happydogImage);
-    }
-     
+    
     
   drawSprites();
   //add styles here
@@ -62,24 +71,10 @@ function readStock(data){
 }
 
 function writeStock (x){
-  if(x<=0){
-    x=0;
-  }else{
-    x=x-1;
-  }
+ 
   
   database.ref('/').update({
     'foodStock': x
   })
 }
-fedTime=database.ref('FeedTime');
-        fedTime.on("value",function(data)){
-            lastFed=data.val();
-            feed=createButton("feed the dog")
-            feed.position(700,95);
-            feed.mousePressed(feedDog);
 
-            addFood=createButton("Add Food")
-            addFood.position(800,95);
-            addFood.mousePressed(addFoods);
-      }
